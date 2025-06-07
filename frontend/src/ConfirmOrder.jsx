@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -8,10 +8,14 @@ const ConfirmOrder = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const hasRunRef = useRef(false); // Use useRef to persist across renders
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
     useEffect(() => {
+        if (hasRunRef.current) return; // Skip if already run
+        hasRunRef.current = true; // Mark as run
+
         axios.get(`${backendUrl}/api/orders/${orderId}/`)
             .then(response => {
                 setOrder(response.data);
